@@ -2452,7 +2452,7 @@ Be aware that the `id` of a pull request returned from "Issues" endpoints will b
 /**
  * @api {POST} /repos/:owner/:repo/issues create
  * @apiName create
- * @apiDescription Any user with pull access to a repository can create an issue.
+ * @apiDescription Any user with pull access to a repository can create an issue. If [issues are disabled in the repository](https://help.github.com/articles/disabling-issues/), the API returns a `410 Gone` status.
 
 This endpoint triggers [notifications](https://help.github.com/articles/about-notifications/). Creating content too quickly using this endpoint may result in abuse rate limiting. See "[Abuse rate limits](https://developer.github.com/v3/#abuse-rate-limits)" and "[Dealing with abuse rate limits](https://developer.github.com/v3/guides/best-practices-for-integrators/#dealing-with-abuse-rate-limits)" for details.
 
@@ -4926,7 +4926,7 @@ Be aware that the `id` of a pull request returned from "Issues" endpoints will b
 /**
  * @api {GET} /repos/:owner/:repo/pulls list
  * @apiName list
- * @apiDescription Draft pull requests are available in public repositories with GitHub Free and GitHub Pro, and in public and private repositories with GitHub Team, GitHub Enterprise Cloud, and GitHub Enterprise Server. For more information, see [GitHub's billing plans](https://help.github.com/articles/github-s-billing-plans) in the GitHub Help documentation.
+ * @apiDescription Draft pull requests are available in public repositories with GitHub Free and GitHub Pro, and in public and private repositories with GitHub Team and GitHub Enterprise Cloud. For more information, see [GitHub's billing plans](https://help.github.com/articles/github-s-billing-plans) in the GitHub Help documentation.
 
 <a href="https://developer.github.com/v3/pulls/#list-pull-requests">REST API doc</a>
  * @apiGroup Pulls
@@ -4950,7 +4950,7 @@ Be aware that the `id` of a pull request returned from "Issues" endpoints will b
 /**
  * @api {GET} /repos/:owner/:repo/pulls/:number get
  * @apiName get
- * @apiDescription Draft pull requests are available in public repositories with GitHub Free and GitHub Pro, and in public and private repositories with GitHub Team, GitHub Enterprise Cloud, and GitHub Enterprise Server. For more information, see [GitHub's billing plans](https://help.github.com/articles/github-s-billing-plans) in the GitHub Help documentation.
+ * @apiDescription Draft pull requests are available in public repositories with GitHub Free and GitHub Pro, and in public and private repositories with GitHub Team and GitHub Enterprise Cloud. For more information, see [GitHub's billing plans](https://help.github.com/articles/github-s-billing-plans) in the GitHub Help documentation.
 
 Lists details of a pull request by providing its number.
 
@@ -4982,7 +4982,7 @@ Pass the appropriate [media type](https://developer.github.com/v3/media/#commits
 /**
  * @api {POST} /repos/:owner/:repo/pulls create
  * @apiName create
- * @apiDescription Draft pull requests are available in public repositories with GitHub Free and GitHub Pro, and in public and private repositories with GitHub Team, GitHub Enterprise Cloud, and GitHub Enterprise Server. For more information, see [GitHub's billing plans](https://help.github.com/articles/github-s-billing-plans) in the GitHub Help documentation.
+ * @apiDescription Draft pull requests are available in public repositories with GitHub Free and GitHub Pro, and in public and private repositories with GitHub Team and GitHub Enterprise Cloud. For more information, see [GitHub's billing plans](https://help.github.com/articles/github-s-billing-plans) in the GitHub Help documentation.
 
 To open or update a pull request in a public repository, you must have write access to the head or the source branch. For organization-owned repositories, you must be a member of the organization that owns the repository to open or update a pull request.
 
@@ -5008,7 +5008,7 @@ This endpoint triggers [notifications](https://help.github.com/articles/about-no
 /**
  * @api {POST} /repos/:owner/:repo/pulls createFromIssue
  * @apiName createFromIssue
- * @apiDescription Draft pull requests are available in public repositories with GitHub Free and GitHub Pro, and in public and private repositories with GitHub Team, GitHub Enterprise Cloud, and GitHub Enterprise Server. For more information, see [GitHub's billing plans](https://help.github.com/articles/github-s-billing-plans) in the GitHub Help documentation.
+ * @apiDescription Draft pull requests are available in public repositories with GitHub Free and GitHub Pro, and in public and private repositories with GitHub Team and GitHub Enterprise Cloud. For more information, see [GitHub's billing plans](https://help.github.com/articles/github-s-billing-plans) in the GitHub Help documentation.
 
 To open or update a pull request in a public repository, you must have write access to the head or the source branch. For organization-owned repositories, you must be a member of the organization that owns the repository to open or update a pull request.
 
@@ -5033,7 +5033,7 @@ This endpoint triggers [notifications](https://help.github.com/articles/about-no
 /**
  * @api {PATCH} /repos/:owner/:repo/pulls/:number update
  * @apiName update
- * @apiDescription Draft pull requests are available in public repositories with GitHub Free and GitHub Pro, and in public and private repositories with GitHub Team, GitHub Enterprise Cloud, and GitHub Enterprise Server. For more information, see [GitHub's billing plans](https://help.github.com/articles/github-s-billing-plans) in the GitHub Help documentation.
+ * @apiDescription Draft pull requests are available in public repositories with GitHub Free and GitHub Pro, and in public and private repositories with GitHub Team and GitHub Enterprise Cloud. For more information, see [GitHub's billing plans](https://help.github.com/articles/github-s-billing-plans) in the GitHub Help documentation.
 
 To open or update a pull request in a public repository, you must have write access to the head or the source branch. For organization-owned repositories, you must be a member of the organization that owns the repository to open or update a pull request.
 
