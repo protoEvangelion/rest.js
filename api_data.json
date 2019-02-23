@@ -5146,14 +5146,14 @@
             "type": "object[]",
             "optional": false,
             "field": "tree",
-            "description": "<p>Objects (of <code>path</code>, <code>mode</code>, <code>type</code>, and <code>sha</code>) specifying a tree structure</p>"
+            "description": "<p>Objects (of <code>path</code>, <code>mode</code>, <code>type</code>, and <code>sha</code>) specifying a tree structure.</p>"
           },
           {
             "group": "Parameter",
             "type": "string",
             "optional": true,
             "field": "tree:path",
-            "description": "<p>The file referenced in the tree</p>"
+            "description": "<p>The file referenced in the tree.</p>"
           },
           {
             "group": "Parameter",
@@ -5167,7 +5167,7 @@
             ],
             "optional": true,
             "field": "tree:mode",
-            "description": "<p>The file mode; one of <code>100644</code> for file (blob), <code>100755</code> for executable (blob), <code>040000</code> for subdirectory (tree), <code>160000</code> for submodule (commit), or <code>120000</code> for a blob that specifies the path of a symlink</p>"
+            "description": "<p>The file mode; one of <code>100644</code> for file (blob), <code>100755</code> for executable (blob), <code>040000</code> for subdirectory (tree), <code>160000</code> for submodule (commit), or <code>120000</code> for a blob that specifies the path of a symlink.</p>"
           },
           {
             "group": "Parameter",
@@ -5179,21 +5179,21 @@
             ],
             "optional": true,
             "field": "tree:type",
-            "description": "<p>Either <code>blob</code>, <code>tree</code>, or <code>commit</code></p>"
+            "description": "<p>Either <code>blob</code>, <code>tree</code>, or <code>commit</code>.</p>"
           },
           {
             "group": "Parameter",
             "type": "string",
             "optional": true,
             "field": "tree:sha",
-            "description": "<p>The SHA1 checksum ID of the object in the tree</p>"
+            "description": "<p>The SHA1 checksum ID of the object in the tree. Also called <code>tree.sha</code>.<br> <em>Note:</em>* Use either <code>tree.sha</code> or <code>content</code> to specify the contents of the entry. Using both <code>tree.sha</code> and <code>content</code> will return an error.</p>"
           },
           {
             "group": "Parameter",
             "type": "string",
             "optional": true,
             "field": "tree:content",
-            "description": "<p>The content you want this file to have. GitHub will write this blob out and use that SHA for this entry. Use either this, or <code>tree.sha</code>.</p>"
+            "description": "<p>The content you want this file to have. GitHub will write this blob out and use that SHA for this entry. Use either this, or <code>tree.sha</code>.<br> <em>Note:</em>* Use either <code>tree.sha</code> or <code>content</code> to specify the contents of the entry. Using both <code>tree.sha</code> and <code>content</code> will return an error.</p>"
           },
           {
             "group": "Parameter",

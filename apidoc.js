@@ -1721,12 +1721,16 @@ DELETE /repos/octocat/Hello-World/git/refs/tags/v1.0
  *
  * @apiParam {string} owner  
  * @apiParam {string} repo  
- * @apiParam {object[]} tree  Objects (of `path`, `mode`, `type`, and `sha`) specifying a tree structure
- * @apiParam {string} [tree:path]  The file referenced in the tree
- * @apiParam {string=100644,100755,040000,160000,120000} [tree:mode]  The file mode; one of `100644` for file (blob), `100755` for executable (blob), `040000` for subdirectory (tree), `160000` for submodule (commit), or `120000` for a blob that specifies the path of a symlink
- * @apiParam {string=blob,tree,commit} [tree:type]  Either `blob`, `tree`, or `commit`
- * @apiParam {string} [tree:sha]  The SHA1 checksum ID of the object in the tree
- * @apiParam {string} [tree:content]  The content you want this file to have. GitHub will write this blob out and use that SHA for this entry. Use either this, or `tree.sha`.
+ * @apiParam {object[]} tree  Objects (of `path`, `mode`, `type`, and `sha`) specifying a tree structure.
+ * @apiParam {string} [tree:path]  The file referenced in the tree.
+ * @apiParam {string=100644,100755,040000,160000,120000} [tree:mode]  The file mode; one of `100644` for file (blob), `100755` for executable (blob), `040000` for subdirectory (tree), `160000` for submodule (commit), or `120000` for a blob that specifies the path of a symlink.
+ * @apiParam {string=blob,tree,commit} [tree:type]  Either `blob`, `tree`, or `commit`.
+ * @apiParam {string} [tree:sha]  The SHA1 checksum ID of the object in the tree. Also called `tree.sha`.  
+  
+**Note:** Use either `tree.sha` or `content` to specify the contents of the entry. Using both `tree.sha` and `content` will return an error.
+ * @apiParam {string} [tree:content]  The content you want this file to have. GitHub will write this blob out and use that SHA for this entry. Use either this, or `tree.sha`.  
+  
+**Note:** Use either `tree.sha` or `content` to specify the contents of the entry. Using both `tree.sha` and `content` will return an error.
  * @apiParam {string} [base_tree]  The SHA1 of the tree you want to update with new data. If you don't set this, the commit will be created on top of everything; however, it will only contain your change, the rest of your files will show up as deleted.
  * @apiExample {js} async/await
  * const result = await octokit.git.createTree({owner, repo, tree, tree[].path, tree[].mode, tree[].type, tree[].sha, tree[].content, base_tree})
