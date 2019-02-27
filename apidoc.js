@@ -5781,7 +5781,7 @@ The authenticated user has explicit permission to access repositories they own, 
  * @apiGroup Repos
  *
  * @apiParam {string=all,public,private} [visibility="all"]  Can be one of `all`, `public`, or `private`.
- * @apiParam {string=owner,collaborator,organization_member} [affiliation="owner,collaborator,organization_member"]  Comma-separated list of values. Can include:  
+ * @apiParam {string} [affiliation="owner,collaborator,organization_member"]  Comma-separated list of values. Can include:  
 \* `owner`: Repositories that are owned by the authenticated user.  
 \* `collaborator`: Repositories that the user has been added to as a collaborator.  
 \* `organization_member`: Repositories that the user has access to through being a member of an organization. This includes every repository on every team that the user is on.

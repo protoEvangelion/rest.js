@@ -20437,11 +20437,6 @@
           {
             "group": "Parameter",
             "type": "string",
-            "allowedValues": [
-              "owner",
-              "collaborator",
-              "organization_member"
-            ],
             "optional": true,
             "field": "affiliation",
             "defaultValue": "owner,collaborator,organization_member",
