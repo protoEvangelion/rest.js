@@ -632,7 +632,7 @@ The permissions the installation has are included under the `permissions` key.
 /**
  * @api {GET} /user/installations listInstallationsForAuthenticatedUser
  * @apiName listInstallationsForAuthenticatedUser
- * @apiDescription Lists installations in a repository that the authenticated user has explicit permission (`:read`, `:write`, or `:admin`) to access.
+ * @apiDescription Lists installations of your GitHub App that the authenticated user has explicit permission (`:read`, `:write`, or `:admin`) to access.
 
 You must use a [user-to-server OAuth access token](https://developer.github.com/apps/building-github-apps/identifying-and-authorizing-users-for-github-apps/#identifying-users-on-your-site), created for a user who has authorized your GitHub App, to access this endpoint.
 
