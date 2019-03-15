@@ -5224,7 +5224,7 @@
     "url": "/repos/:owner/:repo/git/refs/:ref",
     "title": "deleteRef",
     "name": "deleteRef",
-    "description": "<p>Example: Deleting a branch:</p> <pre><code>DELETE /repos/octocat/Hello-World/git/refs/heads/feature-a </code></pre> <p>Example: Deleting a tag:</p> <pre><code>DELETE /repos/octocat/Hello-World/git/refs/tags/v1.0 </code></pre> <p><a href=\"https://developer.github.com/v3/git/refs/#delete-a-reference\">REST API doc</a></p>",
+    "description": "<pre><code>DELETE /repos/octocat/Hello-World/git/refs/heads/feature-a </code></pre> <pre><code>DELETE /repos/octocat/Hello-World/git/refs/tags/v1.0 </code></pre> <p><a href=\"https://developer.github.com/v3/git/refs/#delete-a-reference\">REST API doc</a></p>",
     "group": "Git",
     "parameter": {
       "fields": {
@@ -17226,7 +17226,7 @@
     "url": "/repos/:owner/:repo/deployments",
     "title": "createDeployment",
     "name": "createDeployment",
-    "description": "<p>Deployments offer a few configurable parameters with sane defaults.</p> <p>The <code>ref</code> parameter can be any named branch, tag, or SHA. At GitHub we often deploy branches and verify them before we merge a pull request.</p> <p>The <code>environment</code> parameter allows deployments to be issued to different runtime environments. Teams often have multiple environments for verifying their applications, such as <code>production</code>, <code>staging</code>, and <code>qa</code>. This parameter makes it easier to track which environments have requested deployments. The default environment is <code>production</code>.</p> <p>The <code>auto_merge</code> parameter is used to ensure that the requested ref is not behind the repository's default branch. If the ref <em>is</em> behind the default branch for the repository, we will attempt to merge it for you. If the merge succeeds, the API will return a successful merge commit. If merge conflicts prevent the merge from succeeding, the API will return a failure response.</p> <p>By default, <a href=\"https://developer.github.com/v3/repos/statuses\">commit statuses</a> for every submitted context must be in a <code>success</code> state. The <code>required_contexts</code> parameter allows you to specify a subset of contexts that must be <code>success</code>, or to specify contexts that have not yet been submitted. You are not required to use commit statuses to deploy. If you do not require any contexts or create any commit statuses, the deployment will always succeed.</p> <p>The <code>payload</code> parameter is available for any extra information that a deployment system might need. It is a JSON text field that will be passed on when a deployment event is dispatched.</p> <p>The <code>task</code> parameter is used by the deployment system to allow different execution paths. In the web world this might be <code>deploy:migrations</code> to run schema changes on the system. In the compiled world this could be a flag to compile an application with debugging enabled.</p> <p>Users with <code>repo</code> or <code>repo_deployment</code> scopes can create a deployment for a given ref:</p> <p>A simple example putting the user and room into the payload to notify back to chat networks.</p> <p>A more advanced example specifying required commit statuses and bypassing auto-merging.</p> <p>This error happens when the <code>auto_merge</code> option is enabled and when the default branch (in this case <code>master</code>), can't be merged into the branch that's being deployed (in this case <code>topic-branch</code>), due to merge conflicts.</p> <p>This error happens when the <code>required_contexts</code> parameter indicates that one or more contexts need to have a <code>success</code> status for the commit to be deployed, but one or more of the required contexts do not have a state of <code>success</code>.</p> <p><a href=\"https://developer.github.com/v3/repos/deployments/#create-a-deployment\">REST API doc</a></p>",
+    "description": "<p>Deployments offer a few configurable parameters with sane defaults.</p> <p>The <code>ref</code> parameter can be any named branch, tag, or SHA. At GitHub we often deploy branches and verify them before we merge a pull request.</p> <p>The <code>environment</code> parameter allows deployments to be issued to different runtime environments. Teams often have multiple environments for verifying their applications, such as <code>production</code>, <code>staging</code>, and <code>qa</code>. This parameter makes it easier to track which environments have requested deployments. The default environment is <code>production</code>.</p> <p>The <code>auto_merge</code> parameter is used to ensure that the requested ref is not behind the repository's default branch. If the ref <em>is</em> behind the default branch for the repository, we will attempt to merge it for you. If the merge succeeds, the API will return a successful merge commit. If merge conflicts prevent the merge from succeeding, the API will return a failure response.</p> <p>By default, <a href=\"https://developer.github.com/v3/repos/statuses\">commit statuses</a> for every submitted context must be in a <code>success</code> state. The <code>required_contexts</code> parameter allows you to specify a subset of contexts that must be <code>success</code>, or to specify contexts that have not yet been submitted. You are not required to use commit statuses to deploy. If you do not require any contexts or create any commit statuses, the deployment will always succeed.</p> <p>The <code>payload</code> parameter is available for any extra information that a deployment system might need. It is a JSON text field that will be passed on when a deployment event is dispatched.</p> <p>The <code>task</code> parameter is used by the deployment system to allow different execution paths. In the web world this might be <code>deploy:migrations</code> to run schema changes on the system. In the compiled world this could be a flag to compile an application with debugging enabled.</p> <p>Users with <code>repo</code> or <code>repo_deployment</code> scopes can create a deployment for a given ref:</p> <p>A simple example putting the user and room into the payload to notify back to chat networks.</p> <p>A more advanced example specifying required commit statuses and bypassing auto-merging.</p> <p>You will see this response when GitHub automatically merges the base branch into the topic branch instead of creating a deployment. This auto-merge happens when: Auto-merge option is enabled in the repository Topic branch does not include the latest changes on the base branch, which is <code>master</code>in the response example There are no merge conflicts</p> <p>If there are no new commits in the base branch, a new request to create a deployment should give a successful response.</p> <p>This error happens when the <code>auto_merge</code> option is enabled and when the default branch (in this case <code>master</code>), can't be merged into the branch that's being deployed (in this case <code>topic-branch</code>), due to merge conflicts.</p> <p>This error happens when the <code>required_contexts</code> parameter indicates that one or more contexts need to have a <code>success</code> status for the commit to be deployed, but one or more of the required contexts do not have a state of <code>success</code>.</p> <p><a href=\"https://developer.github.com/v3/repos/deployments/#create-a-deployment\">REST API doc</a></p>",
     "group": "Repos",
     "parameter": {
       "fields": {
@@ -18630,6 +18630,110 @@
     "groupTitle": "Repos"
   },
   {
+    "type": "DELETE",
+    "url": "/repos/:owner/:repo/pages",
+    "title": "disablePagesSite",
+    "name": "disablePagesSite",
+    "description": "<p><a href=\"https://developer.github.com/v3/repos/pages/#disable-a-pages-site\">REST API doc</a></p>",
+    "group": "Repos",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "owner",
+            "description": ""
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "repo",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "async/await",
+        "content": "const result = await octokit.repos.disablePagesSite({owner, repo})",
+        "type": "js"
+      },
+      {
+        "title": "Promise",
+        "content": "octokit.repos.disablePagesSite({owner, repo}).then(result => {})",
+        "type": "js"
+      }
+    ],
+    "version": "0.0.0",
+    "filename": "doc/apidoc.js",
+    "groupTitle": "Repos"
+  },
+  {
+    "type": "POST",
+    "url": "/repos/:owner/:repo/pages",
+    "title": "enablePagesSite",
+    "name": "enablePagesSite",
+    "description": "<p><a href=\"https://developer.github.com/v3/repos/pages/#enable-a-pages-site\">REST API doc</a></p>",
+    "group": "Repos",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "owner",
+            "description": ""
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "repo",
+            "description": ""
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "allowedValues": [
+              "master",
+              "gh-pages"
+            ],
+            "optional": true,
+            "field": "source[branch]",
+            "description": "<p>The repository branch used to publish your <a href=\"https://help.github.com/articles/configuring-a-publishing-source-for-github-pages/\">site's source files</a>. Can be either <code>master</code> or <code>gh-pages</code>.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": true,
+            "field": "source[path]",
+            "description": "<p>The repository directory that includes the source files for the Pages site. When <code>branch</code> is <code>master</code>, you can change <code>path</code> to <code>/docs</code>. When <code>branch</code> is <code>gh-pages</code>, you are unable to specify a <code>path</code> other than <code>/</code>.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "async/await",
+        "content": "const result = await octokit.repos.enablePagesSite({owner, repo, source[branch], source[path]})",
+        "type": "js"
+      },
+      {
+        "title": "Promise",
+        "content": "octokit.repos.enablePagesSite({owner, repo, source[branch], source[path]}).then(result => {})",
+        "type": "js"
+      }
+    ],
+    "version": "0.0.0",
+    "filename": "doc/apidoc.js",
+    "groupTitle": "Repos"
+  },
+  {
     "type": "GET",
     "url": "/repos/:owner/:repo",
     "title": "get",
@@ -19669,7 +19773,7 @@
     "url": "/repos/:owner/:repo/pages",
     "title": "getPages",
     "name": "getPages",
-    "description": "<p>Responses during the preview period contain two additional fields: <code>html_url</code>: The absolute URL (with scheme) to the rendered site. For example, <code>https://username.github.io</code>. <code>source</code>: Information about the source branch and directory for the rendered site. The source field includes: <code>branch</code>: The repo branch for <a href=\"https://help.github.com/articles/configuring-a-publishing-source-for-github-pages/\">site source files</a> For example, <em>master</em> or <em>gh-pages</em>. <code>path</code>: The repo directory from which the site publishes. Can be either <code>/</code> or <code>/docs</code>.</p> <p><a href=\"https://developer.github.com/v3/repos/pages/#get-information-about-a-pages-site\">REST API doc</a></p>",
+    "description": "<p><a href=\"https://developer.github.com/v3/repos/pages/#get-information-about-a-pages-site\">REST API doc</a></p>",
     "group": "Repos",
     "parameter": {
       "fields": {

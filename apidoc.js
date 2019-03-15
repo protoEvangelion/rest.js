@@ -1869,13 +1869,9 @@ In this example, the payload that the signature is over would have been:
 /**
  * @api {DELETE} /repos/:owner/:repo/git/refs/:ref deleteRef
  * @apiName deleteRef
- * @apiDescription Example: Deleting a branch:
-
-```
+ * @apiDescription ```
 DELETE /repos/octocat/Hello-World/git/refs/heads/feature-a
 ```
-
-Example: Deleting a tag:
 
 ```
 DELETE /repos/octocat/Hello-World/git/refs/tags/v1.0
@@ -7371,6 +7367,14 @@ A simple example putting the user and room into the payload to notify back to ch
 
 A more advanced example specifying required commit statuses and bypassing auto-merging.
 
+You will see this response when GitHub automatically merges the base branch into the topic branch instead of creating a deployment. This auto-merge happens when:
+
+*   Auto-merge option is enabled in the repository
+*   Topic branch does not include the latest changes on the base branch, which is `master`in the response example
+*   There are no merge conflicts
+
+If there are no new commits in the base branch, a new request to create a deployment should give a successful response.
+
 This error happens when the `auto_merge` option is enabled and when the default branch (in this case `master`), can't be merged into the branch that's being deployed (in this case `topic-branch`), due to merge conflicts.
 
 This error happens when the `required_contexts` parameter indicates that one or more contexts need to have a `success` status for the commit to be deployed, but one or more of the required contexts do not have a state of `success`.
@@ -7889,14 +7893,7 @@ Deploy keys with write access can perform the same actions as an organization me
 /**
  * @api {GET} /repos/:owner/:repo/pages getPages
  * @apiName getPages
- * @apiDescription Responses during the preview period contain two additional fields:
-
-*   `html_url`: The absolute URL (with scheme) to the rendered site. For example, `https://username.github.io`.
-*   `source`: Information about the source branch and directory for the rendered site. The source field includes:
-    *   `branch`: The repo branch for [site source files](https://help.github.com/articles/configuring-a-publishing-source-for-github-pages/) For example, _master_ or _gh-pages_.
-    *   `path`: The repo directory from which the site publishes. Can be either `/` or `/docs`.
-
-<a href="https://developer.github.com/v3/repos/pages/#get-information-about-a-pages-site">REST API doc</a>
+ * @apiDescription <a href="https://developer.github.com/v3/repos/pages/#get-information-about-a-pages-site">REST API doc</a>
  * @apiGroup Repos
  *
  * @apiParam {string} owner  
@@ -7905,6 +7902,38 @@ Deploy keys with write access can perform the same actions as an organization me
  * const result = await octokit.repos.getPages({owner, repo})
  * @apiExample {js} Promise
  * octokit.repos.getPages({owner, repo}).then(result => {})
+ */
+
+
+/**
+ * @api {POST} /repos/:owner/:repo/pages enablePagesSite
+ * @apiName enablePagesSite
+ * @apiDescription <a href="https://developer.github.com/v3/repos/pages/#enable-a-pages-site">REST API doc</a>
+ * @apiGroup Repos
+ *
+ * @apiParam {string} owner  
+ * @apiParam {string} repo  
+ * @apiParam {string=master,gh-pages} [source[branch]]  The repository branch used to publish your [site's source files](https://help.github.com/articles/configuring-a-publishing-source-for-github-pages/). Can be either `master` or `gh-pages`.
+ * @apiParam {string} [source[path]]  The repository directory that includes the source files for the Pages site. When `branch` is `master`, you can change `path` to `/docs`. When `branch` is `gh-pages`, you are unable to specify a `path` other than `/`.
+ * @apiExample {js} async/await
+ * const result = await octokit.repos.enablePagesSite({owner, repo, source[branch], source[path]})
+ * @apiExample {js} Promise
+ * octokit.repos.enablePagesSite({owner, repo, source[branch], source[path]}).then(result => {})
+ */
+
+
+/**
+ * @api {DELETE} /repos/:owner/:repo/pages disablePagesSite
+ * @apiName disablePagesSite
+ * @apiDescription <a href="https://developer.github.com/v3/repos/pages/#disable-a-pages-site">REST API doc</a>
+ * @apiGroup Repos
+ *
+ * @apiParam {string} owner  
+ * @apiParam {string} repo  
+ * @apiExample {js} async/await
+ * const result = await octokit.repos.disablePagesSite({owner, repo})
+ * @apiExample {js} Promise
+ * octokit.repos.disablePagesSite({owner, repo}).then(result => {})
  */
 
 
