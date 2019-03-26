@@ -1738,6 +1738,28 @@ _Note_: This API supports blobs up to 100 megabytes in size.
  * @apiName getCommit
  * @apiDescription Gets a Git [commit object](https://git-scm.com/book/en/v1/Git-Internals-Git-Objects#Commit-Objects).
 
+**Signature verification object**
+
+The response will include a `verification` object that describes the result of verifying the commit's signature. The following fields are included in the `verification` object:
+
+These are the possible values for `reason` in the `verification` object:
+
+| Value                    | Description                                                                                                                       |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| `expired_key`            | The key that made the signature is expired.                                                                                       |
+| `not_signing_key`        | The "signing" flag is not among the usage flags in the GPG key that made the signature.                                           |
+| `gpgverify_error`        | There was an error communicating with the signature verification service.                                                         |
+| `gpgverify_unavailable`  | The signature verification service is currently unavailable.                                                                      |
+| `unsigned`               | The object does not include a signature.                                                                                          |
+| `unknown_signature_type` | A non-PGP signature was found in the commit.                                                                                      |
+| `no_user`                | No user was associated with the `committer` email address in the commit.                                                          |
+| `unverified_email`       | The `committer` email address in the commit was associated with a user, but the email address is not verified on her/his account. |
+| `bad_email`              | The `committer` email address in the commit is not included in the identities of the PGP key that made the signature.             |
+| `unknown_key`            | The key that made the signature has not been registered with any user's account.                                                  |
+| `malformed_signature`    | There was an error parsing the signature.                                                                                         |
+| `invalid`                | The signature could not be cryptographically verified using the key whose key-id was found in the signature.                      |
+| `valid`                  | None of the above errors applied, so the signature is considered to be verified.                                                  |
+
 <a href="https://developer.github.com/v3/git/commits/#get-a-commit">REST API doc</a>
  * @apiGroup Git
  *
@@ -1756,23 +1778,31 @@ _Note_: This API supports blobs up to 100 megabytes in size.
  * @apiName createCommit
  * @apiDescription Creates a new Git [commit object](https://git-scm.com/book/en/v1/Git-Internals-Git-Objects#Commit-Objects).
 
-The `committer` section is optional and will be filled with the `author` data if omitted. If the `author` section is omitted, it will be filled in with the authenticated user's information and the current date.
-
-Both the `author` and `committer` parameters have the same keys:
-
-| name  | type   | description                                                                                                                                                       |
-| ----- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| name  | string | The name of the author (or committer) of the commit                                                                                                               |
-| email | string | The email of the author (or committer) of the commit                                                                                                              |
-| date  | string | Indicates when this commit was authored (or committed). This is a timestamp in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format: `YYYY-MM-DDTHH:MM:SSZ`. |
-
-You can also provide an optional string `signature` parameter. This value will be added to the `gpgsig` header of the created commit. For a commit signature to be verifiable by Git or GitHub, it must be an ASCII-armored detached PGP signature over the string commit as it would be written to the object database.
-
-**Note**: To pass a `signature` parameter, you need to first manually create a valid PGP signature, which can be complicated. You may find it easier to [use the command line](https://git-scm.com/book/id/v2/Git-Tools-Signing-Your-Work) to create signed commits.
-
-In this example, the payload that the signature is over would have been:
+In this example, the payload of the signature would be:
 
 
+
+**Signature verification object**
+
+The response will include a `verification` object that describes the result of verifying the commit's signature. The following fields are included in the `verification` object:
+
+These are the possible values for `reason` in the `verification` object:
+
+| Value                    | Description                                                                                                                       |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| `expired_key`            | The key that made the signature is expired.                                                                                       |
+| `not_signing_key`        | The "signing" flag is not among the usage flags in the GPG key that made the signature.                                           |
+| `gpgverify_error`        | There was an error communicating with the signature verification service.                                                         |
+| `gpgverify_unavailable`  | The signature verification service is currently unavailable.                                                                      |
+| `unsigned`               | The object does not include a signature.                                                                                          |
+| `unknown_signature_type` | A non-PGP signature was found in the commit.                                                                                      |
+| `no_user`                | No user was associated with the `committer` email address in the commit.                                                          |
+| `unverified_email`       | The `committer` email address in the commit was associated with a user, but the email address is not verified on her/his account. |
+| `bad_email`              | The `committer` email address in the commit is not included in the identities of the PGP key that made the signature.             |
+| `unknown_key`            | The key that made the signature has not been registered with any user's account.                                                  |
+| `malformed_signature`    | There was an error parsing the signature.                                                                                         |
+| `invalid`                | The signature could not be cryptographically verified using the key whose key-id was found in the signature.                      |
+| `valid`                  | None of the above errors applied, so the signature is considered to be verified.                                                  |
 
 <a href="https://developer.github.com/v3/git/commits/#create-a-commit">REST API doc</a>
  * @apiGroup Git
@@ -1782,12 +1812,19 @@ In this example, the payload that the signature is over would have been:
  * @apiParam {string} message  The commit message
  * @apiParam {string} tree  The SHA of the tree object this commit points to
  * @apiParam {string[]} parents  The SHAs of the commits that were the parents of this commit. If omitted or empty, the commit will be written as a root commit. For a single parent, an array of one SHA should be provided; for a merge commit, an array of more than one should be provided.
- * @apiParam {object} [committer]  object containing information about the committer.
- * @apiParam {object} [author]  object containing information about the author.
+ * @apiParam {object} [author]  Information about the author of the commit. By default, the `author` will be the authenticated user and the current date. See the `author` and `committer` object below for details.
+ * @apiParam {string} [author:name]  The name of the author (or committer) of the commit
+ * @apiParam {string} [author:email]  The email of the author (or committer) of the commit
+ * @apiParam {string} [author:date]  Indicates when this commit was authored (or committed). This is a timestamp in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format: `YYYY-MM-DDTHH:MM:SSZ`.
+ * @apiParam {object} [committer]  Information about the person who is making the commit. By default, `committer` will use the information set in `author`. See the `author` and `committer` object below for details.
+ * @apiParam {string} [committer:name]  The name of the author (or committer) of the commit
+ * @apiParam {string} [committer:email]  The email of the author (or committer) of the commit
+ * @apiParam {string} [committer:date]  Indicates when this commit was authored (or committed). This is a timestamp in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format: `YYYY-MM-DDTHH:MM:SSZ`.
+ * @apiParam {string} [signature]  The [PGP signature](https://en.wikipedia.org/wiki/Pretty_Good_Privacy) of the commit. GitHub adds the signature to the `gpgsig` header of the created commit. For a commit signature to be verifiable by Git or GitHub, it must be an ASCII-armored detached PGP signature over the string commit as it would be written to the object database. To pass a `signature` parameter, you need to first manually create a valid PGP signature, which can be complicated. You may find it easier to [use the command line](https://git-scm.com/book/id/v2/Git-Tools-Signing-Your-Work) to create signed commits.
  * @apiExample {js} async/await
- * const result = await octokit.git.createCommit({owner, repo, message, tree, parents, committer, author})
+ * const result = await octokit.git.createCommit({owner, repo, message, tree, parents, author, author.name, author.email, author.date, committer, committer.name, committer.email, committer.date, signature})
  * @apiExample {js} Promise
- * octokit.git.createCommit({owner, repo, message, tree, parents, committer, author}).then(result => {})
+ * octokit.git.createCommit({owner, repo, message, tree, parents, author, author.name, author.email, author.date, committer, committer.name, committer.email, committer.date, signature}).then(result => {})
  */
 
 
@@ -1893,7 +1930,29 @@ DELETE /repos/octocat/Hello-World/git/refs/tags/v1.0
 /**
  * @api {GET} /repos/:owner/:repo/git/tags/:tag_sha getTag
  * @apiName getTag
- * @apiDescription <a href="https://developer.github.com/v3/git/tags/#get-a-tag">REST API doc</a>
+ * @apiDescription **Signature verification object**
+
+The response will include a `verification` object that describes the result of verifying the commit's signature. The following fields are included in the `verification` object:
+
+These are the possible values for `reason` in the `verification` object:
+
+| Value                    | Description                                                                                                                       |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| `expired_key`            | The key that made the signature is expired.                                                                                       |
+| `not_signing_key`        | The "signing" flag is not among the usage flags in the GPG key that made the signature.                                           |
+| `gpgverify_error`        | There was an error communicating with the signature verification service.                                                         |
+| `gpgverify_unavailable`  | The signature verification service is currently unavailable.                                                                      |
+| `unsigned`               | The object does not include a signature.                                                                                          |
+| `unknown_signature_type` | A non-PGP signature was found in the commit.                                                                                      |
+| `no_user`                | No user was associated with the `committer` email address in the commit.                                                          |
+| `unverified_email`       | The `committer` email address in the commit was associated with a user, but the email address is not verified on her/his account. |
+| `bad_email`              | The `committer` email address in the commit is not included in the identities of the PGP key that made the signature.             |
+| `unknown_key`            | The key that made the signature has not been registered with any user's account.                                                  |
+| `malformed_signature`    | There was an error parsing the signature.                                                                                         |
+| `invalid`                | The signature could not be cryptographically verified using the key whose key-id was found in the signature.                      |
+| `valid`                  | None of the above errors applied, so the signature is considered to be verified.                                                  |
+
+<a href="https://developer.github.com/v3/git/tags/#get-a-tag">REST API doc</a>
  * @apiGroup Git
  *
  * @apiParam {string} owner  
@@ -1910,6 +1969,28 @@ DELETE /repos/octocat/Hello-World/git/refs/tags/v1.0
  * @api {POST} /repos/:owner/:repo/git/tags createTag
  * @apiName createTag
  * @apiDescription Note that creating a tag object does not create the reference that makes a tag in Git. If you want to create an annotated tag in Git, you have to do this call to create the tag object, and then [create](https://developer.github.com/v3/git/refs/#create-a-reference) the `refs/tags/[tag]` reference. If you want to create a lightweight tag, you only have to [create](https://developer.github.com/v3/git/refs/#create-a-reference) the tag reference - this call would be unnecessary.
+
+**Signature verification object**
+
+The response will include a `verification` object that describes the result of verifying the commit's signature. The following fields are included in the `verification` object:
+
+These are the possible values for `reason` in the `verification` object:
+
+| Value                    | Description                                                                                                                       |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| `expired_key`            | The key that made the signature is expired.                                                                                       |
+| `not_signing_key`        | The "signing" flag is not among the usage flags in the GPG key that made the signature.                                           |
+| `gpgverify_error`        | There was an error communicating with the signature verification service.                                                         |
+| `gpgverify_unavailable`  | The signature verification service is currently unavailable.                                                                      |
+| `unsigned`               | The object does not include a signature.                                                                                          |
+| `unknown_signature_type` | A non-PGP signature was found in the commit.                                                                                      |
+| `no_user`                | No user was associated with the `committer` email address in the commit.                                                          |
+| `unverified_email`       | The `committer` email address in the commit was associated with a user, but the email address is not verified on her/his account. |
+| `bad_email`              | The `committer` email address in the commit is not included in the identities of the PGP key that made the signature.             |
+| `unknown_key`            | The key that made the signature has not been registered with any user's account.                                                  |
+| `malformed_signature`    | There was an error parsing the signature.                                                                                         |
+| `invalid`                | The signature could not be cryptographically verified using the key whose key-id was found in the signature.                      |
+| `valid`                  | None of the above errors applied, so the signature is considered to be verified.                                                  |
 
 <a href="https://developer.github.com/v3/git/tags/#create-a-tag-object">REST API doc</a>
  * @apiGroup Git
@@ -4976,10 +5057,11 @@ This endpoint triggers [notifications](https://help.github.com/articles/about-no
  * @apiParam {string} base  The name of the branch you want the changes pulled into. This should be an existing branch on the current repository. You cannot submit a pull request to one repository that requests a merge to a base of another repository.
  * @apiParam {string} [body]  The contents of the pull request.
  * @apiParam {boolean} [maintainer_can_modify]  Indicates whether [maintainers can modify](https://help.github.com/articles/allowing-changes-to-a-pull-request-branch-created-from-a-fork/) the pull request.
+ * @apiParam {boolean} [draft]  Indicates whether the pull request is a draft. See "[Draft Pull Requests](https://help.github.com/en/articles/about-pull-requests#draft-pull-requests)" in the GitHub Help documentation to learn more.
  * @apiExample {js} async/await
- * const result = await octokit.pulls.create({owner, repo, title, head, base, body, maintainer_can_modify})
+ * const result = await octokit.pulls.create({owner, repo, title, head, base, body, maintainer_can_modify, draft})
  * @apiExample {js} Promise
- * octokit.pulls.create({owner, repo, title, head, base, body, maintainer_can_modify}).then(result => {})
+ * octokit.pulls.create({owner, repo, title, head, base, body, maintainer_can_modify, draft}).then(result => {})
  */
 
 
@@ -5001,10 +5083,11 @@ This endpoint triggers [notifications](https://help.github.com/articles/about-no
  * @apiParam {string} head  The name of the branch where your changes are implemented. For cross-repository pull requests in the same network, namespace `head` with a user like this: `username:branch`.
  * @apiParam {string} base  The name of the branch you want the changes pulled into. This should be an existing branch on the current repository. You cannot submit a pull request to one repository that requests a merge to a base of another repository.
  * @apiParam {boolean} [maintainer_can_modify]  Indicates whether [maintainers can modify](https://help.github.com/articles/allowing-changes-to-a-pull-request-branch-created-from-a-fork/) the pull request.
+ * @apiParam {boolean} [draft]  Indicates whether the pull request is a draft. See "[Draft Pull Requests](https://help.github.com/en/articles/about-pull-requests#draft-pull-requests)" in the GitHub Help documentation to learn more.
  * @apiExample {js} async/await
- * const result = await octokit.pulls.createFromIssue({owner, repo, issue, head, base, maintainer_can_modify})
+ * const result = await octokit.pulls.createFromIssue({owner, repo, issue, head, base, maintainer_can_modify, draft})
  * @apiExample {js} Promise
- * octokit.pulls.createFromIssue({owner, repo, issue, head, base, maintainer_can_modify}).then(result => {})
+ * octokit.pulls.createFromIssue({owner, repo, issue, head, base, maintainer_can_modify, draft}).then(result => {})
  */
 
 
@@ -7017,7 +7100,29 @@ Comments are ordered by ascending ID.
 /**
  * @api {GET} /repos/:owner/:repo/commits listCommits
  * @apiName listCommits
- * @apiDescription <a href="https://developer.github.com/v3/repos/commits/#list-commits-on-a-repository">REST API doc</a>
+ * @apiDescription **Signature verification object**
+
+The response will include a `verification` object that describes the result of verifying the commit's signature. The following fields are included in the `verification` object:
+
+These are the possible values for `reason` in the `verification` object:
+
+| Value                    | Description                                                                                                                       |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| `expired_key`            | The key that made the signature is expired.                                                                                       |
+| `not_signing_key`        | The "signing" flag is not among the usage flags in the GPG key that made the signature.                                           |
+| `gpgverify_error`        | There was an error communicating with the signature verification service.                                                         |
+| `gpgverify_unavailable`  | The signature verification service is currently unavailable.                                                                      |
+| `unsigned`               | The object does not include a signature.                                                                                          |
+| `unknown_signature_type` | A non-PGP signature was found in the commit.                                                                                      |
+| `no_user`                | No user was associated with the `committer` email address in the commit.                                                          |
+| `unverified_email`       | The `committer` email address in the commit was associated with a user, but the email address is not verified on her/his account. |
+| `bad_email`              | The `committer` email address in the commit is not included in the identities of the PGP key that made the signature.             |
+| `unknown_key`            | The key that made the signature has not been registered with any user's account.                                                  |
+| `malformed_signature`    | There was an error parsing the signature.                                                                                         |
+| `invalid`                | The signature could not be cryptographically verified using the key whose key-id was found in the signature.                      |
+| `valid`                  | None of the above errors applied, so the signature is considered to be verified.                                                  |
+
+<a href="https://developer.github.com/v3/repos/commits/#list-commits-on-a-repository">REST API doc</a>
  * @apiGroup Repos
  *
  * @apiParam {string} owner  
@@ -7039,7 +7144,29 @@ Comments are ordered by ascending ID.
 /**
  * @api {GET} /repos/:owner/:repo/commits/:sha getCommit
  * @apiName getCommit
- * @apiDescription Diffs with binary data will have no 'patch' property. Pass the appropriate [media type](https://developer.github.com/v3/media/#commits-commit-comparison-and-pull-requests) to fetch diff and patch formats.
+ * @apiDescription Diffs with binary data will have no `patch` property. Pass the appropriate [media type](https://developer.github.com/v3/media/#commits-commit-comparison-and-pull-requests) to fetch diff and patch formats.
+
+**Signature verification object**
+
+The response will include a `verification` object that describes the result of verifying the commit's signature. The following fields are included in the `verification` object:
+
+These are the possible values for `reason` in the `verification` object:
+
+| Value                    | Description                                                                                                                       |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| `expired_key`            | The key that made the signature is expired.                                                                                       |
+| `not_signing_key`        | The "signing" flag is not among the usage flags in the GPG key that made the signature.                                           |
+| `gpgverify_error`        | There was an error communicating with the signature verification service.                                                         |
+| `gpgverify_unavailable`  | The signature verification service is currently unavailable.                                                                      |
+| `unsigned`               | The object does not include a signature.                                                                                          |
+| `unknown_signature_type` | A non-PGP signature was found in the commit.                                                                                      |
+| `no_user`                | No user was associated with the `committer` email address in the commit.                                                          |
+| `unverified_email`       | The `committer` email address in the commit was associated with a user, but the email address is not verified on her/his account. |
+| `bad_email`              | The `committer` email address in the commit is not included in the identities of the PGP key that made the signature.             |
+| `unknown_key`            | The key that made the signature has not been registered with any user's account.                                                  |
+| `malformed_signature`    | There was an error parsing the signature.                                                                                         |
+| `invalid`                | The signature could not be cryptographically verified using the key whose key-id was found in the signature.                      |
+| `valid`                  | None of the above errors applied, so the signature is considered to be verified.                                                  |
 
 <a href="https://developer.github.com/v3/repos/commits/#get-a-single-commit">REST API doc</a>
  * @apiGroup Repos
@@ -7057,15 +7184,14 @@ Comments are ordered by ascending ID.
 /**
  * @api {GET} /repos/:owner/:repo/commits/:ref getCommitRefSha
  * @apiName getCommitRefSha
- * @apiDescription Users with read access can get the SHA-1 of a commit reference:
+ * @apiDescription **Note:** To access this endpoint, you must provide a custom [media type](https://developer.github.com/v3/media) in the `Accept` header:
 
-To access the API you must provide a custom [media type](https://developer.github.com/v3/media) in the `Accept` header:
+```
+application/vnd.github.VERSION.sha
 
+```
 
-
-To check if a remote reference's SHA-1 is the same as your local reference's SHA-1, make a `GET` request and provide the current SHA-1 for the local reference as the ETag.
-
-The SHA-1 of the commit reference.
+Returns the SHA-1 of the commit reference. You must have `read` access for the repository to get the SHA-1 of a commit reference. You can use this endpoint to check if a remote reference's SHA-1 is the same as your local reference's SHA-1 by providing the local SHA-1 reference as the ETag.
 
 
 
@@ -7085,21 +7211,37 @@ The SHA-1 of the commit reference.
 /**
  * @api {GET} /repos/:owner/:repo/compare/:base...:head compareCommits
  * @apiName compareCommits
- * @apiDescription Both `:base` and `:head` must be branch names in `:repo`. To compare branches across other repositories in the same network as `:repo`, use the format `<USERNAME>:branch`. For example:
+ * @apiDescription Both `:base` and `:head` must be branch names in `:repo`. To compare branches across other repositories in the same network as `:repo`, use the format `<USERNAME>:branch`.
 
-```
-GET /repos/:owner/:repo/compare/hubot:branchname...octocat:branchname
-```
-
-The response from the API is equivalent to running the `git log base..head` command; however, commits are returned in reverse chronological order.
-
-Pass the appropriate [media type](https://developer.github.com/v3/media/#commits-commit-comparison-and-pull-requests) to fetch diff and patch formats.
+The response from the API is equivalent to running the `git log base..head` command; however, commits are returned in reverse chronological order. Pass the appropriate [media type](https://developer.github.com/v3/media/#commits-commit-comparison-and-pull-requests) to fetch diff and patch formats.
 
 **Working with large comparisons**
 
 The response will include a comparison of up to 250 commits. If you are working with a larger commit range, you can use the [Commit List API](https://developer.github.com/v3/repos/commits/#list-commits-on-a-repository) to enumerate all commits in the range.
 
 For comparisons with extremely large diffs, you may receive an error response indicating that the diff took too long to generate. You can typically resolve this error by using a smaller commit range.
+
+**Signature verification object**
+
+The response will include a `verification` object that describes the result of verifying the commit's signature. The following fields are included in the `verification` object:
+
+These are the possible values for `reason` in the `verification` object:
+
+| Value                    | Description                                                                                                                       |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| `expired_key`            | The key that made the signature is expired.                                                                                       |
+| `not_signing_key`        | The "signing" flag is not among the usage flags in the GPG key that made the signature.                                           |
+| `gpgverify_error`        | There was an error communicating with the signature verification service.                                                         |
+| `gpgverify_unavailable`  | The signature verification service is currently unavailable.                                                                      |
+| `unsigned`               | The object does not include a signature.                                                                                          |
+| `unknown_signature_type` | A non-PGP signature was found in the commit.                                                                                      |
+| `no_user`                | No user was associated with the `committer` email address in the commit.                                                          |
+| `unverified_email`       | The `committer` email address in the commit was associated with a user, but the email address is not verified on her/his account. |
+| `bad_email`              | The `committer` email address in the commit is not included in the identities of the PGP key that made the signature.             |
+| `unknown_key`            | The key that made the signature has not been registered with any user's account.                                                  |
+| `malformed_signature`    | There was an error parsing the signature.                                                                                         |
+| `invalid`                | The signature could not be cryptographically verified using the key whose key-id was found in the signature.                      |
+| `valid`                  | None of the above errors applied, so the signature is considered to be verified.                                                  |
 
 <a href="https://developer.github.com/v3/repos/commits/#compare-two-commits">REST API doc</a>
  * @apiGroup Repos
@@ -8785,7 +8927,7 @@ The labels that best match for the query appear first in the search results.
 /**
  * @api {POST} /orgs/:org/teams create
  * @apiName create
- * @apiDescription To create a team, the authenticated user must be a member of `:org`.
+ * @apiDescription To create a team, the authenticated user must be a member or owner of `:org`. By default, organization members can create teams. Organization owners can limit team creation to organization owners. For more information, see "[Setting team creation permissions](https://help.github.com/en/articles/setting-team-creation-permissions-in-your-organization)."
 
 <a href="https://developer.github.com/v3/teams/#create-team">REST API doc</a>
  * @apiGroup Teams

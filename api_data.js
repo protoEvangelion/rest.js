@@ -4881,7 +4881,7 @@ define({ "api": [
     "url": "/repos/:owner/:repo/git/commits",
     "title": "createCommit",
     "name": "createCommit",
-    "description": "<p>Creates a new Git <a href=\"https://git-scm.com/book/en/v1/Git-Internals-Git-Objects#Commit-Objects\">commit object</a>.</p> <p>The <code>committer</code> section is optional and will be filled with the <code>author</code> data if omitted. If the <code>author</code> section is omitted, it will be filled in with the authenticated user's information and the current date.</p> <p>Both the <code>author</code> and <code>committer</code> parameters have the same keys:</p> <table> <thead> <tr> <th>name</th> <th>type</th> <th>description</th> </tr> </thead> <tbody> <tr> <td>name</td> <td>string</td> <td>The name of the author (or committer) of the commit</td> </tr> <tr> <td>email</td> <td>string</td> <td>The email of the author (or committer) of the commit</td> </tr> <tr> <td>date</td> <td>string</td> <td>Indicates when this commit was authored (or committed). This is a timestamp in <a href=\"https://en.wikipedia.org/wiki/ISO_8601\">ISO 8601</a> format: <code>YYYY-MM-DDTHH:MM:SSZ</code>.</td> </tr> </tbody> </table> <p>You can also provide an optional string <code>signature</code> parameter. This value will be added to the <code>gpgsig</code> header of the created commit. For a commit signature to be verifiable by Git or GitHub, it must be an ASCII-armored detached PGP signature over the string commit as it would be written to the object database. <em>Note</em>*: To pass a <code>signature</code> parameter, you need to first manually create a valid PGP signature, which can be complicated. You may find it easier to <a href=\"https://git-scm.com/book/id/v2/Git-Tools-Signing-Your-Work\">use the command line</a> to create signed commits.</p> <p>In this example, the payload that the signature is over would have been:</p> <p><a href=\"https://developer.github.com/v3/git/commits/#create-a-commit\">REST API doc</a></p>",
+    "description": "<p>Creates a new Git <a href=\"https://git-scm.com/book/en/v1/Git-Internals-Git-Objects#Commit-Objects\">commit object</a>.</p> <p>In this example, the payload of the signature would be: <em>Signature verification object</em>*</p> <p>The response will include a <code>verification</code> object that describes the result of verifying the commit's signature. The following fields are included in the <code>verification</code> object:</p> <p>These are the possible values for <code>reason</code> in the <code>verification</code> object:</p> <table> <thead> <tr> <th>Value</th> <th>Description</th> </tr> </thead> <tbody> <tr> <td><code>expired_key</code></td> <td>The key that made the signature is expired.</td> </tr> <tr> <td><code>not_signing_key</code></td> <td>The &quot;signing&quot; flag is not among the usage flags in the GPG key that made the signature.</td> </tr> <tr> <td><code>gpgverify_error</code></td> <td>There was an error communicating with the signature verification service.</td> </tr> <tr> <td><code>gpgverify_unavailable</code></td> <td>The signature verification service is currently unavailable.</td> </tr> <tr> <td><code>unsigned</code></td> <td>The object does not include a signature.</td> </tr> <tr> <td><code>unknown_signature_type</code></td> <td>A non-PGP signature was found in the commit.</td> </tr> <tr> <td><code>no_user</code></td> <td>No user was associated with the <code>committer</code> email address in the commit.</td> </tr> <tr> <td><code>unverified_email</code></td> <td>The <code>committer</code> email address in the commit was associated with a user, but the email address is not verified on her/his account.</td> </tr> <tr> <td><code>bad_email</code></td> <td>The <code>committer</code> email address in the commit is not included in the identities of the PGP key that made the signature.</td> </tr> <tr> <td><code>unknown_key</code></td> <td>The key that made the signature has not been registered with any user's account.</td> </tr> <tr> <td><code>malformed_signature</code></td> <td>There was an error parsing the signature.</td> </tr> <tr> <td><code>invalid</code></td> <td>The signature could not be cryptographically verified using the key whose key-id was found in the signature.</td> </tr> <tr> <td><code>valid</code></td> <td>None of the above errors applied, so the signature is considered to be verified.</td> </tr> </tbody> </table> <p><a href=\"https://developer.github.com/v3/git/commits/#create-a-commit\">REST API doc</a></p>",
     "group": "Git",
     "parameter": {
       "fields": {
@@ -4925,15 +4925,64 @@ define({ "api": [
             "group": "Parameter",
             "type": "object",
             "optional": true,
-            "field": "committer",
-            "description": "<p>object containing information about the committer.</p>"
+            "field": "author",
+            "description": "<p>Information about the author of the commit. By default, the <code>author</code> will be the authenticated user and the current date. See the <code>author</code> and <code>committer</code> object below for details.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": true,
+            "field": "author:name",
+            "description": "<p>The name of the author (or committer) of the commit</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": true,
+            "field": "author:email",
+            "description": "<p>The email of the author (or committer) of the commit</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": true,
+            "field": "author:date",
+            "description": "<p>Indicates when this commit was authored (or committed). This is a timestamp in <a href=\"https://en.wikipedia.org/wiki/ISO_8601\">ISO 8601</a> format: <code>YYYY-MM-DDTHH:MM:SSZ</code>.</p>"
           },
           {
             "group": "Parameter",
             "type": "object",
             "optional": true,
-            "field": "author",
-            "description": "<p>object containing information about the author.</p>"
+            "field": "committer",
+            "description": "<p>Information about the person who is making the commit. By default, <code>committer</code> will use the information set in <code>author</code>. See the <code>author</code> and <code>committer</code> object below for details.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": true,
+            "field": "committer:name",
+            "description": "<p>The name of the author (or committer) of the commit</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": true,
+            "field": "committer:email",
+            "description": "<p>The email of the author (or committer) of the commit</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": true,
+            "field": "committer:date",
+            "description": "<p>Indicates when this commit was authored (or committed). This is a timestamp in <a href=\"https://en.wikipedia.org/wiki/ISO_8601\">ISO 8601</a> format: <code>YYYY-MM-DDTHH:MM:SSZ</code>.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": true,
+            "field": "signature",
+            "description": "<p>The <a href=\"https://en.wikipedia.org/wiki/Pretty_Good_Privacy\">PGP signature</a> of the commit. GitHub adds the signature to the <code>gpgsig</code> header of the created commit. For a commit signature to be verifiable by Git or GitHub, it must be an ASCII-armored detached PGP signature over the string commit as it would be written to the object database. To pass a <code>signature</code> parameter, you need to first manually create a valid PGP signature, which can be complicated. You may find it easier to <a href=\"https://git-scm.com/book/id/v2/Git-Tools-Signing-Your-Work\">use the command line</a> to create signed commits.</p>"
           }
         ]
       }
@@ -4941,12 +4990,12 @@ define({ "api": [
     "examples": [
       {
         "title": "async/await",
-        "content": "const result = await octokit.git.createCommit({owner, repo, message, tree, parents, committer, author})",
+        "content": "const result = await octokit.git.createCommit({owner, repo, message, tree, parents, author, author.name, author.email, author.date, committer, committer.name, committer.email, committer.date, signature})",
         "type": "js"
       },
       {
         "title": "Promise",
-        "content": "octokit.git.createCommit({owner, repo, message, tree, parents, committer, author}).then(result => {})",
+        "content": "octokit.git.createCommit({owner, repo, message, tree, parents, author, author.name, author.email, author.date, committer, committer.name, committer.email, committer.date, signature}).then(result => {})",
         "type": "js"
       }
     ],
@@ -5016,7 +5065,7 @@ define({ "api": [
     "url": "/repos/:owner/:repo/git/tags",
     "title": "createTag",
     "name": "createTag",
-    "description": "<p>Note that creating a tag object does not create the reference that makes a tag in Git. If you want to create an annotated tag in Git, you have to do this call to create the tag object, and then <a href=\"https://developer.github.com/v3/git/refs/#create-a-reference\">create</a> the <code>refs/tags/[tag]</code> reference. If you want to create a lightweight tag, you only have to <a href=\"https://developer.github.com/v3/git/refs/#create-a-reference\">create</a> the tag reference - this call would be unnecessary.</p> <p><a href=\"https://developer.github.com/v3/git/tags/#create-a-tag-object\">REST API doc</a></p>",
+    "description": "<p>Note that creating a tag object does not create the reference that makes a tag in Git. If you want to create an annotated tag in Git, you have to do this call to create the tag object, and then <a href=\"https://developer.github.com/v3/git/refs/#create-a-reference\">create</a> the <code>refs/tags/[tag]</code> reference. If you want to create a lightweight tag, you only have to <a href=\"https://developer.github.com/v3/git/refs/#create-a-reference\">create</a> the tag reference - this call would be unnecessary. <em>Signature verification object</em>*</p> <p>The response will include a <code>verification</code> object that describes the result of verifying the commit's signature. The following fields are included in the <code>verification</code> object:</p> <p>These are the possible values for <code>reason</code> in the <code>verification</code> object:</p> <table> <thead> <tr> <th>Value</th> <th>Description</th> </tr> </thead> <tbody> <tr> <td><code>expired_key</code></td> <td>The key that made the signature is expired.</td> </tr> <tr> <td><code>not_signing_key</code></td> <td>The &quot;signing&quot; flag is not among the usage flags in the GPG key that made the signature.</td> </tr> <tr> <td><code>gpgverify_error</code></td> <td>There was an error communicating with the signature verification service.</td> </tr> <tr> <td><code>gpgverify_unavailable</code></td> <td>The signature verification service is currently unavailable.</td> </tr> <tr> <td><code>unsigned</code></td> <td>The object does not include a signature.</td> </tr> <tr> <td><code>unknown_signature_type</code></td> <td>A non-PGP signature was found in the commit.</td> </tr> <tr> <td><code>no_user</code></td> <td>No user was associated with the <code>committer</code> email address in the commit.</td> </tr> <tr> <td><code>unverified_email</code></td> <td>The <code>committer</code> email address in the commit was associated with a user, but the email address is not verified on her/his account.</td> </tr> <tr> <td><code>bad_email</code></td> <td>The <code>committer</code> email address in the commit is not included in the identities of the PGP key that made the signature.</td> </tr> <tr> <td><code>unknown_key</code></td> <td>The key that made the signature has not been registered with any user's account.</td> </tr> <tr> <td><code>malformed_signature</code></td> <td>There was an error parsing the signature.</td> </tr> <tr> <td><code>invalid</code></td> <td>The signature could not be cryptographically verified using the key whose key-id was found in the signature.</td> </tr> <tr> <td><code>valid</code></td> <td>None of the above errors applied, so the signature is considered to be verified.</td> </tr> </tbody> </table> <p><a href=\"https://developer.github.com/v3/git/tags/#create-a-tag-object\">REST API doc</a></p>",
     "group": "Git",
     "parameter": {
       "fields": {
@@ -5324,7 +5373,7 @@ define({ "api": [
     "url": "/repos/:owner/:repo/git/commits/:commit_sha",
     "title": "getCommit",
     "name": "getCommit",
-    "description": "<p>Gets a Git <a href=\"https://git-scm.com/book/en/v1/Git-Internals-Git-Objects#Commit-Objects\">commit object</a>.</p> <p><a href=\"https://developer.github.com/v3/git/commits/#get-a-commit\">REST API doc</a></p>",
+    "description": "<p>Gets a Git <a href=\"https://git-scm.com/book/en/v1/Git-Internals-Git-Objects#Commit-Objects\">commit object</a>. <em>Signature verification object</em>*</p> <p>The response will include a <code>verification</code> object that describes the result of verifying the commit's signature. The following fields are included in the <code>verification</code> object:</p> <p>These are the possible values for <code>reason</code> in the <code>verification</code> object:</p> <table> <thead> <tr> <th>Value</th> <th>Description</th> </tr> </thead> <tbody> <tr> <td><code>expired_key</code></td> <td>The key that made the signature is expired.</td> </tr> <tr> <td><code>not_signing_key</code></td> <td>The &quot;signing&quot; flag is not among the usage flags in the GPG key that made the signature.</td> </tr> <tr> <td><code>gpgverify_error</code></td> <td>There was an error communicating with the signature verification service.</td> </tr> <tr> <td><code>gpgverify_unavailable</code></td> <td>The signature verification service is currently unavailable.</td> </tr> <tr> <td><code>unsigned</code></td> <td>The object does not include a signature.</td> </tr> <tr> <td><code>unknown_signature_type</code></td> <td>A non-PGP signature was found in the commit.</td> </tr> <tr> <td><code>no_user</code></td> <td>No user was associated with the <code>committer</code> email address in the commit.</td> </tr> <tr> <td><code>unverified_email</code></td> <td>The <code>committer</code> email address in the commit was associated with a user, but the email address is not verified on her/his account.</td> </tr> <tr> <td><code>bad_email</code></td> <td>The <code>committer</code> email address in the commit is not included in the identities of the PGP key that made the signature.</td> </tr> <tr> <td><code>unknown_key</code></td> <td>The key that made the signature has not been registered with any user's account.</td> </tr> <tr> <td><code>malformed_signature</code></td> <td>There was an error parsing the signature.</td> </tr> <tr> <td><code>invalid</code></td> <td>The signature could not be cryptographically verified using the key whose key-id was found in the signature.</td> </tr> <tr> <td><code>valid</code></td> <td>None of the above errors applied, so the signature is considered to be verified.</td> </tr> </tbody> </table> <p><a href=\"https://developer.github.com/v3/git/commits/#get-a-commit\">REST API doc</a></p>",
     "group": "Git",
     "parameter": {
       "fields": {
@@ -5424,7 +5473,7 @@ define({ "api": [
     "url": "/repos/:owner/:repo/git/tags/:tag_sha",
     "title": "getTag",
     "name": "getTag",
-    "description": "<p><a href=\"https://developer.github.com/v3/git/tags/#get-a-tag\">REST API doc</a></p>",
+    "description": "<p><strong>Signature verification object</strong></p> <p>The response will include a <code>verification</code> object that describes the result of verifying the commit's signature. The following fields are included in the <code>verification</code> object:</p> <p>These are the possible values for <code>reason</code> in the <code>verification</code> object:</p> <table> <thead> <tr> <th>Value</th> <th>Description</th> </tr> </thead> <tbody> <tr> <td><code>expired_key</code></td> <td>The key that made the signature is expired.</td> </tr> <tr> <td><code>not_signing_key</code></td> <td>The &quot;signing&quot; flag is not among the usage flags in the GPG key that made the signature.</td> </tr> <tr> <td><code>gpgverify_error</code></td> <td>There was an error communicating with the signature verification service.</td> </tr> <tr> <td><code>gpgverify_unavailable</code></td> <td>The signature verification service is currently unavailable.</td> </tr> <tr> <td><code>unsigned</code></td> <td>The object does not include a signature.</td> </tr> <tr> <td><code>unknown_signature_type</code></td> <td>A non-PGP signature was found in the commit.</td> </tr> <tr> <td><code>no_user</code></td> <td>No user was associated with the <code>committer</code> email address in the commit.</td> </tr> <tr> <td><code>unverified_email</code></td> <td>The <code>committer</code> email address in the commit was associated with a user, but the email address is not verified on her/his account.</td> </tr> <tr> <td><code>bad_email</code></td> <td>The <code>committer</code> email address in the commit is not included in the identities of the PGP key that made the signature.</td> </tr> <tr> <td><code>unknown_key</code></td> <td>The key that made the signature has not been registered with any user's account.</td> </tr> <tr> <td><code>malformed_signature</code></td> <td>There was an error parsing the signature.</td> </tr> <tr> <td><code>invalid</code></td> <td>The signature could not be cryptographically verified using the key whose key-id was found in the signature.</td> </tr> <tr> <td><code>valid</code></td> <td>None of the above errors applied, so the signature is considered to be verified.</td> </tr> </tbody> </table> <p><a href=\"https://developer.github.com/v3/git/tags/#get-a-tag\">REST API doc</a></p>",
     "group": "Git",
     "parameter": {
       "fields": {
@@ -13885,6 +13934,13 @@ define({ "api": [
             "optional": true,
             "field": "maintainer_can_modify",
             "description": "<p>Indicates whether <a href=\"https://help.github.com/articles/allowing-changes-to-a-pull-request-branch-created-from-a-fork/\">maintainers can modify</a> the pull request.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "boolean",
+            "optional": true,
+            "field": "draft",
+            "description": "<p>Indicates whether the pull request is a draft. See &quot;<a href=\"https://help.github.com/en/articles/about-pull-requests#draft-pull-requests\">Draft Pull Requests</a>&quot; in the GitHub Help documentation to learn more.</p>"
           }
         ]
       }
@@ -13892,12 +13948,12 @@ define({ "api": [
     "examples": [
       {
         "title": "async/await",
-        "content": "const result = await octokit.pulls.create({owner, repo, title, head, base, body, maintainer_can_modify})",
+        "content": "const result = await octokit.pulls.create({owner, repo, title, head, base, body, maintainer_can_modify, draft})",
         "type": "js"
       },
       {
         "title": "Promise",
-        "content": "octokit.pulls.create({owner, repo, title, head, base, body, maintainer_can_modify}).then(result => {})",
+        "content": "octokit.pulls.create({owner, repo, title, head, base, body, maintainer_can_modify, draft}).then(result => {})",
         "type": "js"
       }
     ],
@@ -14098,6 +14154,13 @@ define({ "api": [
             "optional": true,
             "field": "maintainer_can_modify",
             "description": "<p>Indicates whether <a href=\"https://help.github.com/articles/allowing-changes-to-a-pull-request-branch-created-from-a-fork/\">maintainers can modify</a> the pull request.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "boolean",
+            "optional": true,
+            "field": "draft",
+            "description": "<p>Indicates whether the pull request is a draft. See &quot;<a href=\"https://help.github.com/en/articles/about-pull-requests#draft-pull-requests\">Draft Pull Requests</a>&quot; in the GitHub Help documentation to learn more.</p>"
           }
         ]
       }
@@ -14105,12 +14168,12 @@ define({ "api": [
     "examples": [
       {
         "title": "async/await",
-        "content": "const result = await octokit.pulls.createFromIssue({owner, repo, issue, head, base, maintainer_can_modify})",
+        "content": "const result = await octokit.pulls.createFromIssue({owner, repo, issue, head, base, maintainer_can_modify, draft})",
         "type": "js"
       },
       {
         "title": "Promise",
-        "content": "octokit.pulls.createFromIssue({owner, repo, issue, head, base, maintainer_can_modify}).then(result => {})",
+        "content": "octokit.pulls.createFromIssue({owner, repo, issue, head, base, maintainer_can_modify, draft}).then(result => {})",
         "type": "js"
       }
     ],
@@ -17091,7 +17154,7 @@ define({ "api": [
     "url": "/repos/:owner/:repo/compare/:base...:head",
     "title": "compareCommits",
     "name": "compareCommits",
-    "description": "<p>Both <code>:base</code> and <code>:head</code> must be branch names in <code>:repo</code>. To compare branches across other repositories in the same network as <code>:repo</code>, use the format <code>&lt;USERNAME&gt;:branch</code>. For example:</p> <pre><code>GET /repos/:owner/:repo/compare/hubot:branchname...octocat:branchname </code></pre> <p>The response from the API is equivalent to running the <code>git log base..head</code> command; however, commits are returned in reverse chronological order.</p> <p>Pass the appropriate <a href=\"https://developer.github.com/v3/media/#commits-commit-comparison-and-pull-requests\">media type</a> to fetch diff and patch formats. <em>Working with large comparisons</em>*</p> <p>The response will include a comparison of up to 250 commits. If you are working with a larger commit range, you can use the <a href=\"https://developer.github.com/v3/repos/commits/#list-commits-on-a-repository\">Commit List API</a> to enumerate all commits in the range.</p> <p>For comparisons with extremely large diffs, you may receive an error response indicating that the diff took too long to generate. You can typically resolve this error by using a smaller commit range.</p> <p><a href=\"https://developer.github.com/v3/repos/commits/#compare-two-commits\">REST API doc</a></p>",
+    "description": "<p>Both <code>:base</code> and <code>:head</code> must be branch names in <code>:repo</code>. To compare branches across other repositories in the same network as <code>:repo</code>, use the format <code>&lt;USERNAME&gt;:branch</code>.</p> <p>The response from the API is equivalent to running the <code>git log base..head</code> command; however, commits are returned in reverse chronological order. Pass the appropriate <a href=\"https://developer.github.com/v3/media/#commits-commit-comparison-and-pull-requests\">media type</a> to fetch diff and patch formats. <em>Working with large comparisons</em>*</p> <p>The response will include a comparison of up to 250 commits. If you are working with a larger commit range, you can use the <a href=\"https://developer.github.com/v3/repos/commits/#list-commits-on-a-repository\">Commit List API</a> to enumerate all commits in the range.</p> <p>For comparisons with extremely large diffs, you may receive an error response indicating that the diff took too long to generate. You can typically resolve this error by using a smaller commit range. <em>Signature verification object</em>*</p> <p>The response will include a <code>verification</code> object that describes the result of verifying the commit's signature. The following fields are included in the <code>verification</code> object:</p> <p>These are the possible values for <code>reason</code> in the <code>verification</code> object:</p> <table> <thead> <tr> <th>Value</th> <th>Description</th> </tr> </thead> <tbody> <tr> <td><code>expired_key</code></td> <td>The key that made the signature is expired.</td> </tr> <tr> <td><code>not_signing_key</code></td> <td>The &quot;signing&quot; flag is not among the usage flags in the GPG key that made the signature.</td> </tr> <tr> <td><code>gpgverify_error</code></td> <td>There was an error communicating with the signature verification service.</td> </tr> <tr> <td><code>gpgverify_unavailable</code></td> <td>The signature verification service is currently unavailable.</td> </tr> <tr> <td><code>unsigned</code></td> <td>The object does not include a signature.</td> </tr> <tr> <td><code>unknown_signature_type</code></td> <td>A non-PGP signature was found in the commit.</td> </tr> <tr> <td><code>no_user</code></td> <td>No user was associated with the <code>committer</code> email address in the commit.</td> </tr> <tr> <td><code>unverified_email</code></td> <td>The <code>committer</code> email address in the commit was associated with a user, but the email address is not verified on her/his account.</td> </tr> <tr> <td><code>bad_email</code></td> <td>The <code>committer</code> email address in the commit is not included in the identities of the PGP key that made the signature.</td> </tr> <tr> <td><code>unknown_key</code></td> <td>The key that made the signature has not been registered with any user's account.</td> </tr> <tr> <td><code>malformed_signature</code></td> <td>There was an error parsing the signature.</td> </tr> <tr> <td><code>invalid</code></td> <td>The signature could not be cryptographically verified using the key whose key-id was found in the signature.</td> </tr> <tr> <td><code>valid</code></td> <td>None of the above errors applied, so the signature is considered to be verified.</td> </tr> </tbody> </table> <p><a href=\"https://developer.github.com/v3/repos/commits/#compare-two-commits\">REST API doc</a></p>",
     "group": "Repos",
     "parameter": {
       "fields": {
@@ -19136,7 +19199,7 @@ define({ "api": [
     "url": "/repos/:owner/:repo/commits/:sha",
     "title": "getCommit",
     "name": "getCommit",
-    "description": "<p>Diffs with binary data will have no 'patch' property. Pass the appropriate <a href=\"https://developer.github.com/v3/media/#commits-commit-comparison-and-pull-requests\">media type</a> to fetch diff and patch formats.</p> <p><a href=\"https://developer.github.com/v3/repos/commits/#get-a-single-commit\">REST API doc</a></p>",
+    "description": "<p>Diffs with binary data will have no <code>patch</code> property. Pass the appropriate <a href=\"https://developer.github.com/v3/media/#commits-commit-comparison-and-pull-requests\">media type</a> to fetch diff and patch formats. <em>Signature verification object</em>*</p> <p>The response will include a <code>verification</code> object that describes the result of verifying the commit's signature. The following fields are included in the <code>verification</code> object:</p> <p>These are the possible values for <code>reason</code> in the <code>verification</code> object:</p> <table> <thead> <tr> <th>Value</th> <th>Description</th> </tr> </thead> <tbody> <tr> <td><code>expired_key</code></td> <td>The key that made the signature is expired.</td> </tr> <tr> <td><code>not_signing_key</code></td> <td>The &quot;signing&quot; flag is not among the usage flags in the GPG key that made the signature.</td> </tr> <tr> <td><code>gpgverify_error</code></td> <td>There was an error communicating with the signature verification service.</td> </tr> <tr> <td><code>gpgverify_unavailable</code></td> <td>The signature verification service is currently unavailable.</td> </tr> <tr> <td><code>unsigned</code></td> <td>The object does not include a signature.</td> </tr> <tr> <td><code>unknown_signature_type</code></td> <td>A non-PGP signature was found in the commit.</td> </tr> <tr> <td><code>no_user</code></td> <td>No user was associated with the <code>committer</code> email address in the commit.</td> </tr> <tr> <td><code>unverified_email</code></td> <td>The <code>committer</code> email address in the commit was associated with a user, but the email address is not verified on her/his account.</td> </tr> <tr> <td><code>bad_email</code></td> <td>The <code>committer</code> email address in the commit is not included in the identities of the PGP key that made the signature.</td> </tr> <tr> <td><code>unknown_key</code></td> <td>The key that made the signature has not been registered with any user's account.</td> </tr> <tr> <td><code>malformed_signature</code></td> <td>There was an error parsing the signature.</td> </tr> <tr> <td><code>invalid</code></td> <td>The signature could not be cryptographically verified using the key whose key-id was found in the signature.</td> </tr> <tr> <td><code>valid</code></td> <td>None of the above errors applied, so the signature is considered to be verified.</td> </tr> </tbody> </table> <p><a href=\"https://developer.github.com/v3/repos/commits/#get-a-single-commit\">REST API doc</a></p>",
     "group": "Repos",
     "parameter": {
       "fields": {
@@ -19279,7 +19342,7 @@ define({ "api": [
     "url": "/repos/:owner/:repo/commits/:ref",
     "title": "getCommitRefSha",
     "name": "getCommitRefSha",
-    "description": "<p>Users with read access can get the SHA-1 of a commit reference:</p> <p>To access the API you must provide a custom <a href=\"https://developer.github.com/v3/media\">media type</a> in the <code>Accept</code> header:</p> <p>To check if a remote reference's SHA-1 is the same as your local reference's SHA-1, make a <code>GET</code> request and provide the current SHA-1 for the local reference as the ETag.</p> <p>The SHA-1 of the commit reference.</p> <p><a href=\"https://developer.github.com/v3/repos/commits/#get-the-sha-1-of-a-commit-reference\">REST API doc</a></p>",
+    "description": "<p><strong>Note:</strong> To access this endpoint, you must provide a custom <a href=\"https://developer.github.com/v3/media\">media type</a> in the <code>Accept</code> header:</p> <pre><code>application/vnd.github.VERSION.sha  </code></pre> <p>Returns the SHA-1 of the commit reference. You must have <code>read</code> access for the repository to get the SHA-1 of a commit reference. You can use this endpoint to check if a remote reference's SHA-1 is the same as your local reference's SHA-1 by providing the local SHA-1 reference as the ETag.</p> <p><a href=\"https://developer.github.com/v3/repos/commits/#get-the-sha-1-of-a-commit-reference\">REST API doc</a></p>",
     "group": "Repos",
     "parameter": {
       "fields": {
@@ -20980,7 +21043,7 @@ define({ "api": [
     "url": "/repos/:owner/:repo/commits",
     "title": "listCommits",
     "name": "listCommits",
-    "description": "<p><a href=\"https://developer.github.com/v3/repos/commits/#list-commits-on-a-repository\">REST API doc</a></p>",
+    "description": "<p><strong>Signature verification object</strong></p> <p>The response will include a <code>verification</code> object that describes the result of verifying the commit's signature. The following fields are included in the <code>verification</code> object:</p> <p>These are the possible values for <code>reason</code> in the <code>verification</code> object:</p> <table> <thead> <tr> <th>Value</th> <th>Description</th> </tr> </thead> <tbody> <tr> <td><code>expired_key</code></td> <td>The key that made the signature is expired.</td> </tr> <tr> <td><code>not_signing_key</code></td> <td>The &quot;signing&quot; flag is not among the usage flags in the GPG key that made the signature.</td> </tr> <tr> <td><code>gpgverify_error</code></td> <td>There was an error communicating with the signature verification service.</td> </tr> <tr> <td><code>gpgverify_unavailable</code></td> <td>The signature verification service is currently unavailable.</td> </tr> <tr> <td><code>unsigned</code></td> <td>The object does not include a signature.</td> </tr> <tr> <td><code>unknown_signature_type</code></td> <td>A non-PGP signature was found in the commit.</td> </tr> <tr> <td><code>no_user</code></td> <td>No user was associated with the <code>committer</code> email address in the commit.</td> </tr> <tr> <td><code>unverified_email</code></td> <td>The <code>committer</code> email address in the commit was associated with a user, but the email address is not verified on her/his account.</td> </tr> <tr> <td><code>bad_email</code></td> <td>The <code>committer</code> email address in the commit is not included in the identities of the PGP key that made the signature.</td> </tr> <tr> <td><code>unknown_key</code></td> <td>The key that made the signature has not been registered with any user's account.</td> </tr> <tr> <td><code>malformed_signature</code></td> <td>There was an error parsing the signature.</td> </tr> <tr> <td><code>invalid</code></td> <td>The signature could not be cryptographically verified using the key whose key-id was found in the signature.</td> </tr> <tr> <td><code>valid</code></td> <td>None of the above errors applied, so the signature is considered to be verified.</td> </tr> </tbody> </table> <p><a href=\"https://developer.github.com/v3/repos/commits/#list-commits-on-a-repository\">REST API doc</a></p>",
     "group": "Repos",
     "parameter": {
       "fields": {
@@ -25481,7 +25544,7 @@ define({ "api": [
     "url": "/orgs/:org/teams",
     "title": "create",
     "name": "create",
-    "description": "<p>To create a team, the authenticated user must be a member of <code>:org</code>.</p> <p><a href=\"https://developer.github.com/v3/teams/#create-team\">REST API doc</a></p>",
+    "description": "<p>To create a team, the authenticated user must be a member or owner of <code>:org</code>. By default, organization members can create teams. Organization owners can limit team creation to organization owners. For more information, see &quot;<a href=\"https://help.github.com/en/articles/setting-team-creation-permissions-in-your-organization\">Setting team creation permissions</a>.&quot;</p> <p><a href=\"https://developer.github.com/v3/teams/#create-team\">REST API doc</a></p>",
     "group": "Teams",
     "parameter": {
       "fields": {
