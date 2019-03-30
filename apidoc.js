@@ -232,7 +232,7 @@ The following example uses the `since` parameter to list notifications that have
 /**
  * @api {PUT} /notifications markAsRead
  * @apiName markAsRead
- * @apiDescription Marking a notification as "read" removes it from the [default view on GitHub](https://github.com/notifications).
+ * @apiDescription Marking a notification as "read" removes it from the [default view on GitHub](https://github.com/notifications). If the number of notifications is too large to complete in one request, you will receive a `202 Accepted` status and GitHub will run an asynchronous process to mark notifications as "read." To check whether any "unread" notifications remain, you can use the [List your notifications](https://developer.github.com/v3/activity/notifications/#list-your-notifications) endpoint and pass the query parameter `all=false`.
 
 <a href="https://developer.github.com/v3/activity/notifications/#mark-as-read">REST API doc</a>
  * @apiGroup Activity
@@ -248,7 +248,7 @@ The following example uses the `since` parameter to list notifications that have
 /**
  * @api {PUT} /repos/:owner/:repo/notifications markNotificationsAsReadForRepo
  * @apiName markNotificationsAsReadForRepo
- * @apiDescription Marking all notifications in a repository as "read" removes them from the [default view on GitHub](https://github.com/notifications).
+ * @apiDescription Marking all notifications in a repository as "read" removes them from the [default view on GitHub](https://github.com/notifications). If the number of notifications is too large to complete in one request, you will receive a `202 Accepted` status and GitHub will run an asynchronous process to mark notifications as "read." To check whether any "unread" notifications remain, you can use the [List your notifications in a repository](https://developer.github.com/v3/activity/notifications/#list-your-notifications-in-a-repository) endpoint and pass the query parameter `all=false`.
 
 <a href="https://developer.github.com/v3/activity/notifications/#mark-notifications-as-read-in-a-repository">REST API doc</a>
  * @apiGroup Activity
@@ -1008,7 +1008,9 @@ GitHub Apps must use a [JWT](https://developer.github.com/apps/building-github-a
 /**
  * @api {POST} /repos/:owner/:repo/check-runs create
  * @apiName create
- * @apiDescription Creates a new check run for a specific commit in a repository. Your GitHub App must have the `checks:write` permission to create check runs.
+ * @apiDescription **Note:** The Checks API only looks for pushes in the repository where the check suite or check run were created. Pushes to a branch in a forked repository are not detected and return an empty `pull_requests` array.
+
+Creates a new check run for a specific commit in a repository. Your GitHub App must have the `checks:write` permission to create check runs.
 
 <a href="https://developer.github.com/v3/checks/runs/#create-a-check-run">REST API doc</a>
  * @apiGroup Checks
@@ -1056,7 +1058,9 @@ GitHub Apps must use a [JWT](https://developer.github.com/apps/building-github-a
 /**
  * @api {PATCH} /repos/:owner/:repo/check-runs/:check_run_id update
  * @apiName update
- * @apiDescription Updates a check run for a specific commit in a repository. Your GitHub App must have the `checks:write` permission to edit check runs.
+ * @apiDescription **Note:** The Checks API only looks for pushes in the repository where the check suite or check run were created. Pushes to a branch in a forked repository are not detected and return an empty `pull_requests` array.
+
+Updates a check run for a specific commit in a repository. Your GitHub App must have the `checks:write` permission to edit check runs.
 
 <a href="https://developer.github.com/v3/checks/runs/#update-a-check-run">REST API doc</a>
  * @apiGroup Checks
@@ -1104,7 +1108,9 @@ GitHub Apps must use a [JWT](https://developer.github.com/apps/building-github-a
 /**
  * @api {GET} /repos/:owner/:repo/commits/:ref/check-runs listForRef
  * @apiName listForRef
- * @apiDescription Lists check runs for a commit ref. The `ref` can be a SHA, branch name, or a tag name. GitHub Apps must have the `checks:read` permission on a private repository or pull access to a public repository to get check runs. OAuth Apps and authenticated users must have the `repo` scope to get check runs in a private repository.
+ * @apiDescription **Note:** The Checks API only looks for pushes in the repository where the check suite or check run were created. Pushes to a branch in a forked repository are not detected and return an empty `pull_requests` array.
+
+Lists check runs for a commit ref. The `ref` can be a SHA, branch name, or a tag name. GitHub Apps must have the `checks:read` permission on a private repository or pull access to a public repository to get check runs. OAuth Apps and authenticated users must have the `repo` scope to get check runs in a private repository.
 
 <a href="https://developer.github.com/v3/checks/runs/#list-check-runs-for-a-specific-ref">REST API doc</a>
  * @apiGroup Checks
@@ -1127,7 +1133,9 @@ GitHub Apps must use a [JWT](https://developer.github.com/apps/building-github-a
 /**
  * @api {GET} /repos/:owner/:repo/check-suites/:check_suite_id/check-runs listForSuite
  * @apiName listForSuite
- * @apiDescription Lists check runs for a check suite using its `id`. GitHub Apps must have the `checks:read` permission on a private repository or pull access to a public repository to get check runs. OAuth Apps and authenticated users must have the `repo` scope to get check runs in a private repository.
+ * @apiDescription **Note:** The Checks API only looks for pushes in the repository where the check suite or check run were created. Pushes to a branch in a forked repository are not detected and return an empty `pull_requests` array.
+
+Lists check runs for a check suite using its `id`. GitHub Apps must have the `checks:read` permission on a private repository or pull access to a public repository to get check runs. OAuth Apps and authenticated users must have the `repo` scope to get check runs in a private repository.
 
 <a href="https://developer.github.com/v3/checks/runs/#list-check-runs-in-a-check-suite">REST API doc</a>
  * @apiGroup Checks
@@ -1150,7 +1158,9 @@ GitHub Apps must use a [JWT](https://developer.github.com/apps/building-github-a
 /**
  * @api {GET} /repos/:owner/:repo/check-runs/:check_run_id get
  * @apiName get
- * @apiDescription Gets a single check run using its `id`. GitHub Apps must have the `checks:read` permission on a private repository or pull access to a public repository to get check runs. OAuth Apps and authenticated users must have the `repo` scope to get check runs in a private repository.
+ * @apiDescription **Note:** The Checks API only looks for pushes in the repository where the check suite or check run were created. Pushes to a branch in a forked repository are not detected and return an empty `pull_requests` array.
+
+Gets a single check run using its `id`. GitHub Apps must have the `checks:read` permission on a private repository or pull access to a public repository to get check runs. OAuth Apps and authenticated users must have the `repo` scope to get check runs in a private repository.
 
 <a href="https://developer.github.com/v3/checks/runs/#get-a-single-check-run">REST API doc</a>
  * @apiGroup Checks
@@ -1188,7 +1198,9 @@ GitHub Apps must use a [JWT](https://developer.github.com/apps/building-github-a
 /**
  * @api {GET} /repos/:owner/:repo/check-suites/:check_suite_id getSuite
  * @apiName getSuite
- * @apiDescription Gets a single check suite using its `id`. GitHub Apps must have the `checks:read` permission on a private repository or pull access to a public repository to get check suites. OAuth Apps and authenticated users must have the `repo` scope to get check suites in a private repository.
+ * @apiDescription **Note:** The Checks API only looks for pushes in the repository where the check suite or check run were created. Pushes to a branch in a forked repository are not detected and return an empty `pull_requests` array and a `null` value for `head_branch`.
+
+Gets a single check suite using its `id`. GitHub Apps must have the `checks:read` permission on a private repository or pull access to a public repository to get check suites. OAuth Apps and authenticated users must have the `repo` scope to get check suites in a private repository.
 
 <a href="https://developer.github.com/v3/checks/suites/#get-a-single-check-suite">REST API doc</a>
  * @apiGroup Checks
@@ -1206,7 +1218,9 @@ GitHub Apps must use a [JWT](https://developer.github.com/apps/building-github-a
 /**
  * @api {GET} /repos/:owner/:repo/commits/:ref/check-suites listSuitesForRef
  * @apiName listSuitesForRef
- * @apiDescription Lists check suites for a commit `ref`. The `ref` can be a SHA, branch name, or a tag name. GitHub Apps must have the `checks:read` permission on a private repository or pull access to a public repository to list check suites. OAuth Apps and authenticated users must have the `repo` scope to get check suites in a private repository.
+ * @apiDescription **Note:** The Checks API only looks for pushes in the repository where the check suite or check run were created. Pushes to a branch in a forked repository are not detected and return an empty `pull_requests` array and a `null` value for `head_branch`.
+
+Lists check suites for a commit `ref`. The `ref` can be a SHA, branch name, or a tag name. GitHub Apps must have the `checks:read` permission on a private repository or pull access to a public repository to list check suites. OAuth Apps and authenticated users must have the `repo` scope to get check suites in a private repository.
 
 <a href="https://developer.github.com/v3/checks/suites/#list-check-suites-for-a-specific-ref">REST API doc</a>
  * @apiGroup Checks
@@ -1248,7 +1262,9 @@ GitHub Apps must use a [JWT](https://developer.github.com/apps/building-github-a
 /**
  * @api {POST} /repos/:owner/:repo/check-suites createSuite
  * @apiName createSuite
- * @apiDescription By default, check suites are automatically created when you create a [check run](https://developer.github.com/v3/checks/runs/). You only need to use this endpoint for manually creating check suites when you've disabled automatic creation using "[Set preferences for check suites on a repository](https://developer.github.com/v3/checks/suites/#set-preferences-for-check-suites-on-a-repository)". Your GitHub App must have the `checks:write` permission to create check suites.
+ * @apiDescription **Note:** The Checks API only looks for pushes in the repository where the check suite or check run were created. Pushes to a branch in a forked repository are not detected and return an empty `pull_requests` array and a `null` value for `head_branch`.
+
+By default, check suites are automatically created when you create a [check run](https://developer.github.com/v3/checks/runs/). You only need to use this endpoint for manually creating check suites when you've disabled automatic creation using "[Set preferences for check suites on a repository](https://developer.github.com/v3/checks/suites/#set-preferences-for-check-suites-on-a-repository)". Your GitHub App must have the `checks:write` permission to create check suites.
 
 <a href="https://developer.github.com/v3/checks/suites/#create-a-check-suite">REST API doc</a>
  * @apiGroup Checks
@@ -8921,6 +8937,23 @@ The labels that best match for the query appear first in the search results.
  * const result = await octokit.teams.get({team_id})
  * @apiExample {js} Promise
  * octokit.teams.get({team_id}).then(result => {})
+ */
+
+
+/**
+ * @api {GET} /orgs/:org/teams/:team_slug getByName
+ * @apiName getByName
+ * @apiDescription Gets a team using the team's `slug`. GitHub generates the `slug` from the team `name`.
+
+<a href="https://developer.github.com/v3/teams/#get-team-by-name">REST API doc</a>
+ * @apiGroup Teams
+ *
+ * @apiParam {string} org  
+ * @apiParam {string} team_slug  
+ * @apiExample {js} async/await
+ * const result = await octokit.teams.getByName({org, team_slug})
+ * @apiExample {js} Promise
+ * octokit.teams.getByName({org, team_slug}).then(result => {})
  */
 
 
