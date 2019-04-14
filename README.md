@@ -96,7 +96,7 @@ const octokit = new Octokit({
 
   // set custom URL for on-premise GitHub Enterprise installations
   baseUrl: 'https://api.github.com',
-  
+
   // pass custom methods for debug, info, warn and error
   log: {
     debug: () => {},
@@ -155,7 +155,8 @@ The `auth` option can be:
 2. As object with the properties `username`, `password`, `on2fa`.
 
    `on2fa` is an asynchronous function that must resolve with two-factor
-   authentication code sent to the user.
+   authentication code sent to the user. This function will only be called
+   if the user has 2fa enabled.
 
    ```js
    new Octokit({
